@@ -29,7 +29,7 @@ jobs:
 
       # 3. 【关键调整】有了 android 目录后，再初始化 Java 6，此时内置的 gradle 缓存就不会报错了
       - name: Setup Java 17
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
