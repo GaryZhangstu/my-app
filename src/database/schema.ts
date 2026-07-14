@@ -1,0 +1,38 @@
+export const SCHEMA_VERSION = 1;
+
+export const CREATE_TABLES = `
+PRAGMA journal_mode = WAL;
+
+CREATE TABLE IF NOT EXISTS cosmetics (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  type TEXT NOT NULL,
+  brand TEXT,
+  frequency INTEGER NOT NULL DEFAULT 1,
+  remind_days TEXT NOT NULL DEFAULT '[]',
+  notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS supplements (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  brand TEXT,
+  dosage TEXT NOT NULL,
+  remind_times TEXT NOT NULL DEFAULT '[]',
+  remind_days TEXT NOT NULL DEFAULT '[]',
+  scene TEXT,
+  notes TEXT,
+  is_active INTEGER DEFAULT 1,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS usage_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  product_type TEXT NOT NULL,
+  product_id INTEGER NOT NULL,
+  product_name TEXT NOT NULL,
+  used_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  note TEXT
+);
+`;
