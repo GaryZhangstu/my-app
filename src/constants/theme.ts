@@ -1,26 +1,21 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
 import '@/global.css';
 
 import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    text: '#1A1A2E',
+    background: '#F8F6F3',
+    backgroundElement: '#FFFFFF',
+    backgroundSelected: '#F0EDE8',
+    textSecondary: '#6B7280',
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    text: '#F5F0EB',
+    background: '#0F1419',
+    backgroundElement: '#1C2530',
+    backgroundSelected: '#253344',
+    textSecondary: '#8B95A5',
   },
 } as const;
 
@@ -28,13 +23,9 @@ export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
+    sans: 'ui-rounded',
     serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: 'ui-monospace',
   },
   default: {
@@ -59,6 +50,27 @@ export const Spacing = {
   four: 24,
   five: 32,
   six: 64,
+} as const;
+
+export const BrandColors = {
+  cosmetic: '#FF7EB3',
+  cosmeticLight: '#FFB3D1',
+  supplement: '#5B9BD5',
+  supplementLight: '#8DBDE8',
+  success: '#2ECC71',
+  successLight: '#6EE7A0',
+  warning: '#F39C12',
+  accent: '#6C63FF',
+  accentLight: '#9D97FF',
+} as const;
+
+export const Gradients = {
+  cosmetic: ['#FF7EB3', '#FF5C8A'],
+  supplement: ['#5B9BD5', '#3A7BC8'],
+  success: ['#2ECC71', '#27AE60'],
+  card: ['#1C2530', '#253344'],
+  cardCosmetic: ['#2A1F2D', '#1C2530'],
+  cardSupplement: ['#1F2A35', '#1C2530'],
 } as const;
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;

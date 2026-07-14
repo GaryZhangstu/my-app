@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet } from 'react-native';
 import { SymbolView } from 'expo-symbols';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -13,29 +14,31 @@ type CheckInButtonProps = {
 export function CheckInButton({ checkedIn, onPress }: CheckInButtonProps) {
   const theme = useTheme();
 
+  if (checkedIn) {
+    return (
+      <LinearGradient
+        colors={['#2ECC71', '#27AE60']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.buttonGradient}>
+        <SymbolView name="checkmark.circle.fill" size={18} tintColor="#ffffff" />
+        <ThemedText style={styles.textChecked}>已打卡</ThemedText>
+      </LinearGradient>
+    );
+  }
+
   return (
     <Pressable
       style={[
         styles.button,
         {
-          backgroundColor: checkedIn ? '#34c759' : theme.backgroundElement,
-          borderColor: checkedIn ? '#34c759' : theme.backgroundSelected,
+          backgroundColor: theme.backgroundElement + '80',
+          borderColor: theme.textSecondary + '40',
         },
       ]}
-      onPress={onPress}
-      disabled={checkedIn}>
-      <SymbolView
-        name={checkedIn ? 'checkmark.circle.fill' : 'circle'}
-        size={20}
-        tintColor={checkedIn ? '#ffffff' : theme.textSecondary}
-      />
-      <ThemedText
-        style={[
-          styles.text,
-          { color: checkedIn ? '#ffffff' : theme.text },
-        ]}>
-        {checkedIn ? '已打卡' : '打卡'}
-      </ThemedText>
+      onPress={onPress}>
+      <SymbolView name="circle.dashed" size={18} tintColor={theme.textSecondary} />
+      <ThemedText style={[styles.text, { color: theme.textSecondary }]}>打卡</ThemedText>
     </Pressable>
   );
 }
@@ -46,12 +49,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
-    borderRadius: Spacing.two,
+    borderRadius: 20,
     gap: Spacing.one,
     borderWidth: 1,
+    minWidth: 80,
+    justifyContent: 'center',
+  },
+  buttonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.two,
+    borderRadius: 20,
+    gap: Spacing.one,
+    minWidth: 80,
+    justifyContent: 'center',
   },
   text: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
+  },
+  textChecked: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#ffffff',
   },
 });

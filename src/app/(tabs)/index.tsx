@@ -1,14 +1,17 @@
 import { useState, useCallback } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
+import { SymbolView } from 'expo-symbols';
+import { LinearGradient } from 'expo-linear-gradient';
 
-import { Card } from '@/components/ui/card';
+import { GradientCard } from '@/components/ui/card';
 import { CheckInButton } from '@/components/check-in-button';
 import { EmptyState } from '@/components/ui/empty-state';
+import { ProgressRing } from '@/components/progress-ring';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { BrandColors, Gradients, Spacing } from '@/constants/theme';
 import { createCosmeticDao } from '@/database/cosmetics';
 import { createSupplementDao } from '@/database/supplements';
 import { createLogsDao } from '@/database/logs';
@@ -68,11 +71,30 @@ export default function HomeScreen() {
     setWeeklyCountMap((prev) => ({ ...prev, [key]: (prev[key] ?? 0) + 1 }));
   };
 
+  const totalCosmetics = cosmetics.length;
+  const doneCosmetics = cosmetics.filter((c) => {
+    const key = `cosmetic-${c.id}`;
+    return (weeklyCountMap[key] ?? 0) >= c.frequency;
+  }).length;
+
+  const totalSupplements = supplements.length;
+  const doneSupplements = supplements.filter((s) => {
+    const key = `supplement-${s.id}`;
+    return (weeklyCountMap[key] ?? 0) > 0;
+  }).length;
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <ThemedView style={styles.header}>
-        <ThemedText type="subtitle">我的护肤</ThemedText>
-      </ThemedView>
+      <LinearGradient
+        colors={['#1C2530', '#0F1419']}
+        style={styles.headerGradient}>
+        <ThemedText type="subtitle" style={styles.headerTitle}>
+          我的护肤
+        </ThemedText>
+        <ThemedText type="small" style={styles.headerSubtitle}>
+          坚持每一天，遇见更好的自己
+        </ThemedText>
+      </LinearGradient>
 
       {cosmetics.length === 0 && supplements.length === 0 && (
         <EmptyState
@@ -83,36 +105,55 @@ export default function HomeScreen() {
 
       {cosmetics.length > 0 && (
         <ThemedView style={styles.section}>
-          <ThemedText type="small" style={styles.sectionTitle}>
-            化妆品
-          </ThemedText>
+          <ThemedView style={styles.sectionHeader}>
+            <SymbolView
+              name={{ ios: 'drop.fill', android: 'water_drop', web: 'water_drop' }}
+              size={16}
+              tintColor={BrandColors.cosmetic}
+            />
+            <ThemedText type="smallBold" style={[styles.sectionTitle, { color: BrandColors.cosmetic }]}>
+              化妆品
+            </ThemedText>
+            <ThemedText type="small" style={styles.sectionCount}>
+              {doneCosmetics}/{totalCosmetics} 已达标
+            </ThemedText>
+          </ThemedView>
           {cosmetics.map((item) => {
             const key = `cosmetic-${item.id}`;
             const used = weeklyCountMap[key] ?? 0;
             const total = item.frequency;
             const done = used >= total;
             return (
-              <Card key={key}>
-                <ThemedView style={styles.itemRow}>
-                  <ThemedView style={styles.itemInfo}>
+              <GradientCard key={key} gradient={Gradients.cardCosmetic}>
+                <View style={styles.itemRow}>
+                  <View style={styles.itemInfo}>
                     <ThemedText type="default" style={styles.itemName}>
                       {item.name}
                     </ThemedText>
-                    <ThemedText type="small" themeColor="textSecondary">
+                    <ThemedText type="small" style={styles.itemMeta}>
                       {item.type} · {item.brand || '未知品牌'}
                     </ThemedText>
                     <ThemedText
                       type="small"
-                      style={{ color: done ? '#34c759' : '#e37400' }}>
-                      本周 {used}/{total} 次{done ? ' ✓ 已达标' : ''}
+                      style={{ color: done ? '#2ECC71' : BrandColors.warning, marginTop: 4 }}>
+                      {done ? '本周已达标' : `还需 ${total - used} 次`}
                     </ThemedText>
-                  </ThemedView>
+                  </View>
+                  <View style={styles.ringContainer}>
+                    <ProgressRing
+                      size={64}
+                      strokeWidth={6}
+                      progress={used}
+                      total={total}
+                      color={BrandColors.cosmetic}
+                    />
+                  </View>
                   <CheckInButton
                     checkedIn={checkedInMap[key] || false}
                     onPress={() => handleCheckIn('cosmetic', item.id, item.name)}
                   />
-                </ThemedView>
-              </Card>
+                </View>
+              </GradientCard>
             );
           })}
         </ThemedView>
@@ -120,32 +161,43 @@ export default function HomeScreen() {
 
       {supplements.length > 0 && (
         <ThemedView style={styles.section}>
-          <ThemedText type="small" style={styles.sectionTitle}>
-            保健品
-          </ThemedText>
+          <ThemedView style={styles.sectionHeader}>
+            <SymbolView
+              name={{ ios: 'pill.fill', android: 'medication', web: 'medication' }}
+              size={16}
+              tintColor={BrandColors.supplement}
+            />
+            <ThemedText type="smallBold" style={[styles.sectionTitle, { color: BrandColors.supplement }]}>
+              保健品
+            </ThemedText>
+            <ThemedText type="small" style={styles.sectionCount}>
+              {doneSupplements}/{totalSupplements} 已服用
+            </ThemedText>
+          </ThemedView>
           {supplements.map((item) => {
             const key = `supplement-${item.id}`;
+            const used = weeklyCountMap[key] ?? 0;
             return (
-              <Card key={key}>
-                <ThemedView style={styles.itemRow}>
-                  <ThemedView style={styles.itemInfo}>
+              <GradientCard key={key} gradient={Gradients.cardSupplement}>
+                <View style={styles.itemRow}>
+                  <View style={styles.itemInfo}>
                     <ThemedText type="default" style={styles.itemName}>
                       {item.name}
                     </ThemedText>
-                    <ThemedText type="small" themeColor="textSecondary">
+                    <ThemedText type="small" style={styles.itemMeta}>
                       {item.brand || '未知品牌'} · {item.dosage}
                       {item.scene ? ` · ${item.scene}` : ''}
                     </ThemedText>
-                    <ThemedText type="small" themeColor="textSecondary">
-                      本周已服 {weeklyCountMap[key] ?? 0} 次
+                    <ThemedText type="small" style={{ color: used > 0 ? '#2ECC71' : BrandColors.warning, marginTop: 4 }}>
+                      {used > 0 ? '今日已服用' : '待服用'}
                     </ThemedText>
-                  </ThemedView>
+                  </View>
                   <CheckInButton
                     checkedIn={checkedInMap[key] || false}
                     onPress={() => handleCheckIn('supplement', item.id, item.name)}
                   />
-                </ThemedView>
-              </Card>
+                </View>
+              </GradientCard>
             );
           })}
         </ThemedView>
@@ -159,30 +211,56 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: Spacing.three,
     gap: Spacing.three,
   },
-  header: {
-    gap: Spacing.one,
-    paddingVertical: Spacing.two,
+  headerGradient: {
+    padding: Spacing.three,
+    paddingTop: Spacing.two,
+    borderBottomLeftRadius: Spacing.five,
+    borderBottomRightRadius: Spacing.five,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+  },
+  headerSubtitle: {
+    marginTop: Spacing.one,
+    opacity: 0.7,
   },
   section: {
     gap: Spacing.two,
+    paddingHorizontal: Spacing.three,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one,
   },
   sectionTitle: {
-    fontWeight: '600',
-    marginLeft: Spacing.one,
+    fontWeight: '700',
+    fontSize: 15,
+  },
+  sectionCount: {
+    marginLeft: 'auto',
+    opacity: 0.6,
   },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: Spacing.two,
   },
   itemInfo: {
     flex: 1,
-    gap: Spacing.half,
+    gap: 2,
   },
   itemName: {
     fontWeight: '600',
+    fontSize: 16,
+  },
+  itemMeta: {
+    opacity: 0.6,
+  },
+  ringContainer: {
+    marginRight: Spacing.one,
   },
 });

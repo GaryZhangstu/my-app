@@ -51,7 +51,7 @@ export default function AddSupplementScreen() {
   });
   const [scene, setScene] = useState(params.scene || '');
   const [notes, setNotes] = useState(params.notes || '');
-  const [isActive, setIsActive] = useState(params.is_active !== '0');
+  const [isActive] = useState(params.is_active !== '0');
 
   const handleSave = async () => {
     if (!name.trim()) {

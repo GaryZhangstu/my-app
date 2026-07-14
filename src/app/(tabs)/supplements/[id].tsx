@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Alert } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 
 import { Button } from '@/components/ui/button';
@@ -25,9 +25,11 @@ export default function SupplementDetailScreen() {
     setSupplement(item);
   };
 
-  useEffect(() => {
-    loadSupplement();
-  }, [id]);
+  useFocusEffect(
+    useCallback(() => {
+      loadSupplement();
+    }, [id])
+  );
 
   const handleDelete = () => {
     Alert.alert('确认删除', `确定要删除"${supplement?.name}"吗？`, [

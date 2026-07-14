@@ -11,18 +11,26 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#3c87f7',
+        tabBarActiveTintColor: '#5856D6',
         tabBarInactiveTintColor: colors.textSecondary,
-        tabBarStyle: { backgroundColor: colors.background },
+        tabBarStyle: {
+          backgroundColor: colors.background,
+          borderTopColor: colors.backgroundSelected,
+        },
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.text,
+        headerTitleStyle: { fontWeight: '700' },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: '首页',
           tabBarIcon: ({ color, size }) => (
-            <SymbolView name="house.fill" size={size} tintColor={color} />
+            <SymbolView
+              name={{ ios: 'house.fill', android: 'home', web: 'home' }}
+              size={size}
+              tintColor={color}
+            />
           ),
         }}
       />
@@ -32,7 +40,11 @@ export default function TabLayout() {
           title: '化妆品',
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <SymbolView name="sparkles" size={size} tintColor={color} />
+            <SymbolView
+              name={{ ios: 'drop.fill', android: 'water_drop', web: 'water_drop' }}
+              size={size}
+              tintColor={color}
+            />
           ),
         }}
       />
@@ -42,7 +54,11 @@ export default function TabLayout() {
           title: '保健品',
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <SymbolView name="cross.vial" size={size} tintColor={color} />
+            <SymbolView
+              name={{ ios: 'pill.fill', android: 'medication', web: 'medication' }}
+              size={size}
+              tintColor={color}
+            />
           ),
         }}
       />
@@ -51,7 +67,11 @@ export default function TabLayout() {
         options={{
           title: '记录',
           tabBarIcon: ({ color, size }) => (
-            <SymbolView name="clock.arrow.circlepath" size={size} tintColor={color} />
+            <SymbolView
+              name={{ ios: 'list.bullet', android: 'list', web: 'list' }}
+              size={size}
+              tintColor={color}
+            />
           ),
         }}
       />
